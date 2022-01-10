@@ -3,7 +3,7 @@ const app = require("express")();
 //requiering the cors middleware:
 const cors = require("cors");
 
-const PORT = 5001; //we will use port 5001
+const PORT = process.env.PORT || 8080;
 
 const { MongoClient } = require("mongodb");
 const uri =
