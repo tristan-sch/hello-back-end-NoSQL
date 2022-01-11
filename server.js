@@ -3,21 +3,27 @@ const app = require("express")();
 //requiering the cors middleware:
 const cors = require("cors");
 
-const PORT = process.env.PORT || 8080;
+const PORT = 5001; //we will use port 5001
 
-const { MongoClient } = require("mongodb");
+const MongoClient = require("mongodb").MongoClient;
 const uri =
-  "mongodb+srv://tristan:UcWtV4r9IljVDaCW@cluster0.tdpag.mongodb.net/notesDB?retryWrites=true&w=majority";
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+  "mongodb+srv://tristan:UcWtV4r9IljVDaCW@cluster0.tdpag.mongodb.net/test?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true });
 
 app.use(cors()); //telling express to use the cors middleware
-app.use("/", require("./routes/noteRoute"));
 
 app.get("/", (req, res) => {
-  res.send("hello world");
+  //listen to a get request
+  client.connect(async (err) => {
+    const collection = client.db("test").collection("devices");
+    //perform actions on the collection object
+    //find everything in the collection and turn it into an array:
+    const data = await collection.find().toArray();
+
+    //now we turn our data into a string and send it over to the client
+    //remember that our data is an array of objects (in this case only one object) but JSON.stringify turns it into a string
+    res.send(JSON.stringify(data));
+  });
 });
 
 app.listen(PORT, () => {
